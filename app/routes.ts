@@ -31,6 +31,7 @@ export default [
       index("routes/docs/index.tsx"),
       route("add", "routes/docs/add.tsx"),
       ...prefix(":documentId", [
+        index("routes/docs/documentId/index.tsx"),
         layout("routes/docs/documentId/edit/layout.tsx", [
           route("edit", "routes/docs/documentId/edit/index.tsx", [
             route("upload", "routes/api/docs/upload.ts")
