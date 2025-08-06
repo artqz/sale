@@ -2,9 +2,13 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
+  pgEnum,
   pgTable,
   text,
   timestamp,
+  uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 // Better auth tables
@@ -16,14 +20,23 @@ export const user = pgTable(
     id: text("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
-    emailVerified: boolean("emailVerified").notNull(),
+    emailVerified: boolean("emailVerified").notNull().default(false),
     image: text("image"),
-    createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
-    updatedAt: timestamp("updatedAt", { withTimezone: true }).notNull(),
+    role: text("role", { enum: ["user", "admin"] })
+      .notNull()
+      .default("user"),
+    banned: boolean("banned").notNull().default(false),
+    banReason: text("banReason"),
+    createdAt: timestamp("createdAt", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updatedAt", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    banExpires: timestamp("banExpires", { withTimezone: true }), // Убрали NOT NULL
   },
-  (table) => [index("user_email_idx").on(table.email)]
+  (table) => [index("user_email_idx").on(table.email)],
 );
-
 export const session = pgTable(
   "session",
   {
@@ -99,3 +112,62 @@ export const rateLimit = pgTable(
   },
   (table) => [index("rateLimit_key_idx").on(table.key)]
 );
+
+export const documentTypeEnum = pgEnum("document_type", [
+  "INCOMING",       // Входящий документ
+  "OUTGOING",       // Исходящий документ
+  "REGULATORY",     // Нормативный документ
+  "INTERNAL",       // Внутренний документ
+  "MEMORANDUM"      // Служебная записка
+]);
+
+// 2. Таблица документов
+export const document = pgTable("document", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(), // Название документа
+  type: documentTypeEnum("type").notNull(),          // Тип из enum
+  registrationNumber: varchar("reg_number", { length: 50 }), // Рег. номер
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow(),
+  content: text("content"),                         // Текст документа
+  userId: text("user_id").references(() => user.id), // Ссылка на автора
+  isDeleted: boolean("is_deleted").default(false),
+});
+
+export const fileTypeEnum = pgEnum("file_type", [
+  "MAIN",       // Основной документ
+  "ATTACHMENT",       // Приложение
+  "SCAN",     // Скан
+]);
+
+export const file = pgTable('file', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(),
+  path: text('path').notNull(),
+  mimeType: text('mime_type'),
+  size: integer('size'),
+  extension: text("extension"),
+  type: fileTypeEnum('type').notNull(),
+  documentId: uuid('document_id').references(() => document.id),
+  userId: text("user_id").references(() => user.id),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+  isDeleted: boolean('is_deleted').default(false),
+});
+
+// Типы событий
+export const eventTypes = pgTable('event_types', {
+  id: uuid('id').primaryKey(),
+  name: text('name').unique().notNull(), // 'document_created', 'document_updated', 'file_uploaded' и т.д.
+  description: text('description'),
+});
+
+// Таблица событий
+export const events = pgTable('events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  typeId: uuid('type_id').references(() => eventTypes.id),
+  documentId: uuid('document_id').references(() => document.id),
+  fileId: uuid('file_id').references(() => file.id),
+  userId: text('user_id').references(() => user.id),
+  metadata: jsonb('metadata'), // Дополнительные данные о событии
+  createdAt: timestamp('created_at').defaultNow(),
+});

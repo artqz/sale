@@ -3,9 +3,10 @@ import { Link, Outlet, data, href } from "react-router";
 import { ColorSchemeToggle } from "~/components/ColorSchemeToggle";
 import { UserNav } from "~/components/UserNav";
 import { authSessionContext } from "~/utils/contexts";
-import { authMiddleware } from "~/utils/middlewares/authGuard.server";
+import { authMiddleware } from "~/middlewares/authGuard.server";
 import type { Route } from "./+types/layout";
 import { Button } from "~/components/ui/Button";
+import { useAddDocument } from "~/utils/documents.tsx/components";
 
 export const unstable_middleware = [authMiddleware];
 
@@ -15,6 +16,7 @@ export async function loader({ context }: Route.LoaderArgs) {
 }
 
 export default function AuthenticatedLayout(_: Route.ComponentProps) {
+  const addDocument = useAddDocument();
   return (
     <>
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md">
@@ -24,9 +26,9 @@ export default function AuthenticatedLayout(_: Route.ComponentProps) {
           </Link>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link to="/todos">
+              <div onClick={() => addDocument()}>
                 <CircleFadingPlusIcon />
-              </Link>
+              </div>
             </Button>
             <ColorSchemeToggle />
             <UserNav />

@@ -7,6 +7,7 @@ import { Button } from "./ui/Button";
 import type { VariantProps } from "class-variance-authority";
 import { Spinner } from "./Spinner";
 import type { buttonVariants } from "./ui/buttonVariants";
+import { Combobox } from "./ui/Combobox";
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined;
 
@@ -19,7 +20,7 @@ export interface FormFieldProps {
 
 export interface LoadingButtonProps
   extends React.ComponentProps<"button">,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   buttonText: string;
   loadingText: string;
   isPending: boolean;
@@ -66,6 +67,60 @@ export function InputField({
         {...inputProps}
       />
       {errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+    </div>
+  );
+}
+
+type SelectFieldProps = {
+  labelProps: React.LabelHTMLAttributes<HTMLLabelElement>;
+  selectProps: React.SelectHTMLAttributes<HTMLSelectElement> & {
+    placeholder?: string;
+  };
+  options: { value: string; label: string }[];
+  errors?: string[];
+  className?: string;
+};
+
+export function SelectField({
+  labelProps,
+  selectProps,
+  options,
+  errors,
+  className,
+}: SelectFieldProps) {
+  const fallbackId = useId();
+  const id = selectProps.id || fallbackId;
+  const errorId = errors?.length ? `${id}-error` : undefined;
+
+  return (
+    <div className={cn(className, "flex flex-col gap-2")}>
+      {labelProps && <Label htmlFor={id} {...labelProps} />}
+
+      <select
+        id={id}
+        className={cn(
+          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
+          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          errorId && "border-destructive"
+        )}
+        aria-invalid={errorId ? true : undefined}
+        aria-describedby={errorId}
+        {...selectProps}
+      >
+        {selectProps.placeholder && (
+          <option value="" disabled>
+            {selectProps.placeholder}
+          </option>
+        )}
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+
+      {errorId && <ErrorList id={errorId} errors={errors} />}
     </div>
   );
 }
@@ -132,5 +187,48 @@ export function LoadingButton({
         buttonText
       )}
     </Button>
+  );
+}
+
+
+export interface ComboboxFieldProps {
+  labelProps?: React.LabelHTMLAttributes<HTMLLabelElement>;
+  comboboxProps: {
+    options: { value: string; label: string }[];
+    name: string;
+    value: string;
+    onInput: (value: string) => void;
+    placeholder?: string;
+    required?: boolean;
+    disabled?: boolean;
+    // Другие атрибуты
+    autoComplete?: string;
+    enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
+  };
+  errors?: string[] | null;
+  className?: string;
+}
+
+export function ComboboxField({
+  labelProps,
+  comboboxProps,
+  errors,
+  className,
+}: ComboboxFieldProps) {
+  const fallbackId = useId();
+  const id = comboboxProps.name || fallbackId;
+  const errorId = errors?.length ? `${id}-error` : undefined;
+
+  return (
+    <div className={cn(className, "flex flex-col gap-2")}>
+      {labelProps && <Label htmlFor={id} {...labelProps} />}
+      <Combobox
+        {...comboboxProps}
+      // Передаём id, чтобы label привязывался
+      // (необязательно, но полезно для доступности)
+      // Можно добавить в Combobox пропс `id`, если нужно
+      />
+      {errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+    </div>
   );
 }
