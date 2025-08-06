@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/Tooltip";
-import { cn } from "~/utils/utils";
+import { cn } from "~/utils/common";
 
 function Slider({
   className,

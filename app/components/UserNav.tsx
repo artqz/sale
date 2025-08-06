@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/DropdownMenu";
 import { useAuthUser } from "~/hooks/useAuthUser";
-import { getAvatarUrl } from "~/utils/utils";
+import { getAvatarUrl } from "~/utils/common";
 import { Button } from "./ui/Button";
 
 export function UserNav() {

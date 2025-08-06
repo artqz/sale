@@ -1,7 +1,7 @@
 import { MonitorIcon, SmartphoneIcon } from "lucide-react";
 
 import type { authClient } from "~/utils/auth/auth.client";
-import { formatDate, parseUserAgent } from "~/utils/utils";
+import { formatDate, parseUserAgent } from "~/utils/common";
 
 export function SessionItem({
   session,

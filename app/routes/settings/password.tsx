@@ -7,7 +7,7 @@ import { SettingRow } from "~/components/settings/SettingRow";
 import { SettingsLayout } from "~/components/settings/SettingLayout";
 import { authClient } from "~/utils/auth/auth.client";
 import { AppInfo } from "~/utils/config";
-import { cn } from "~/utils/utils";
+import { cn } from "~/utils/common";
 import { changePasswordSchema } from "~/utils/validations/auth";
 import type { Route } from "./+types/password";
 import { buttonVariants } from "~/components/ui/buttonVariants";

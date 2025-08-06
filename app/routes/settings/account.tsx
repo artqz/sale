@@ -13,7 +13,7 @@ import {
 } from "~/utils/auth/auth.server";
 import { AppInfo } from "~/utils/config";
 import { authSessionContext } from "~/utils/contexts";
-import { getAvatarUrl } from "~/utils/utils";
+import { getAvatarUrl } from "~/utils/common";
 import { accountSchema } from "~/utils/validations/settings";
 import type { Route } from "./+types/account";
 

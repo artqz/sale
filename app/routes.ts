@@ -1,8 +1,8 @@
 import {
-  type RouteConfig,
   index,
   layout,
   prefix,
+  type RouteConfig,
   route,
 } from "@react-router/dev/routes";
 
@@ -19,6 +19,21 @@ export default [
   // Main routes
   layout("routes/layout.tsx", [
     index("routes/home.tsx"),
+
+    // Deals
+    ...prefix("deals", [
+      index("routes/deals/index.tsx"),
+      route("add", "routes/deals/add.tsx"),
+      route(":dealId", "routes/deals/$dealId.tsx"),
+    ]),
+
+    // Forum
+    ...prefix("forum", [
+      index("routes/forum/index.tsx"),
+      ...prefix("topics", [
+        route(":topicId", "routes/forum/topics/$topicId.tsx"),
+      ]),
+    ]),
 
     // Settings
     ...prefix("settings", [
@@ -37,6 +52,8 @@ export default [
     // route("auth/error", "routes/api/better-error.tsx"),
     route("auth/*", "routes/api/better.ts"),
     route("color-scheme", "routes/api/colorScheme.ts"),
+    route("comments", "routes/api/comments.ts"),
+    route("upload-image", "routes/api/uploadImage.ts"),
   ]),
 
   // Not found

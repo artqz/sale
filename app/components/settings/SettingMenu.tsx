@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { NavLink, href } from "react-router";
 
-import { cn } from "~/utils/utils";
+import { cn } from "~/utils/common";
 
 interface MenuItem {
   title: string;

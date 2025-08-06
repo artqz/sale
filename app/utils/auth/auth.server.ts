@@ -2,6 +2,7 @@ import "dotenv/config";
 import { betterAuth } from "better-auth";
 import { db } from "~/db/db.server";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { env, isDevelopment } from "../env.server";
 
 let _auth: ReturnType<typeof betterAuth>;
 
@@ -21,11 +22,11 @@ export async function deleteUserImageFromStorage(imageUrl: string | null) {
 
 export function serverAuth() {
   if (!_auth) {
-    console.log(process.env.BETTER_AUTH_URL);
+    console.log(env.BETTER_AUTH_URL);
 
     _auth = betterAuth({
-      baseUrl: process.env.BETTER_AUTH_URL || "http://localhost",
-      trustedOrigins: [process.env.BETTER_AUTH_URL!],
+      baseUrl: env.BETTER_AUTH_URL || "http://localhost",
+      trustedOrigins: [env.BETTER_AUTH_URL!],
 
       database: drizzleAdapter(db, {
         provider: "pg",
@@ -43,7 +44,7 @@ export function serverAuth() {
         enabled: true,
         requireEmailVerification: true,
         sendResetPassword: async ({ user, url, token }) => {
-          if (process.env.NODE_ENV === "development") {
+          if (isDevelopment) {
             console.log("Password reset URL:", url);
           } else {
             // Реальная отправка email (Nodemailer, SendGrid и т.д.)
@@ -55,7 +56,7 @@ export function serverAuth() {
         sendOnSignUp: true,
         autoSignInAfterVerification: true,
         sendVerificationEmail: async ({ user, url, token }) => {
-          if (process.env.NODE_ENV === "development") {
+          if (isDevelopment) {
             console.log("Verification URL:", url);
           } else {
             // Реальная отправка email
@@ -65,8 +66,8 @@ export function serverAuth() {
 
       socialProviders: {
         vk: {
-          clientId: process.env.VK_CLIENT_ID || "",
-          clientSecret: process.env.VK_CLIENT_SECRET || "",
+          clientId: env.VK_CLIENT_ID || "",
+          clientSecret: env.VK_CLIENT_SECRET || "",
         },
       },
 

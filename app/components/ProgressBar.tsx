@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigation } from "react-router";
 import { useSpinDelay } from "spin-delay";
-import { cn } from "~/utils/utils";
+import { cn } from "~/utils/common";
 import { Spinner } from "./Spinner";
 
 interface ProgressBarProps {

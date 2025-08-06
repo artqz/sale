@@ -4,7 +4,7 @@ import { ConnectionItem } from "~/components/settings/ConnectionItem";
 import { SettingsLayout } from "~/components/settings/SettingLayout";
 import { serverAuth } from "~/utils/auth/auth.server";
 import { AppInfo, SOCIAL_PROVIDER_CONFIGS } from "~/utils/config";
-import { formatDate } from "~/utils/utils";
+import { formatDate } from "~/utils/common";
 import type { Route } from "./+types/connections";
 
 export const meta: Route.MetaFunction = () => {

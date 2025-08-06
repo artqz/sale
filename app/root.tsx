@@ -9,18 +9,18 @@ import {
 import { getToast } from "remix-toast";
 import type { Route } from "./+types/root";
 import "./app.css";
-import { requestMiddleware } from "./utils/http.server";
-import { parseColorScheme } from "./utils/colorScheme/server";
-import { getPublicEnv } from "./utils/env.server";
-import { GeneralErrorBoundary } from "./components/ErrorBoundary";
-import { useNonce } from "./hooks/useNonce";
 import { useEffect } from "react";
-import { Toaster, toast as notify } from "sonner";
+import { toast as notify, Toaster } from "sonner";
+import { GeneralErrorBoundary } from "./components/ErrorBoundary";
+import { ProgressBar } from "./components/ProgressBar";
+import { useNonce, NonceProvider } from "./hooks/useNonce";
 import {
   ColorSchemeScript,
   useColorScheme,
 } from "./utils/colorScheme/components";
-import { ProgressBar } from "./components/ProgressBar";
+import { parseColorScheme } from "./utils/colorScheme/server";
+import { getPublicEnv } from "./utils/env.server";
+import { requestMiddleware } from "./utils/http.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -48,7 +48,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const nonce = useNonce();
   const colorScheme = useColorScheme();
 
   return (
@@ -67,13 +66,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <Meta />
         <Links />
-        <ColorSchemeScript nonce={nonce} />
+        <ColorSchemeScript nonce="" />
       </head>
       <body>
         <ProgressBar />
         {children}
-        <ScrollRestoration nonce={nonce} />
-        <Scripts nonce={nonce} />
+        <ScrollRestoration nonce="" />
+        <Scripts nonce="" />
         <Toaster position="top-center" theme={colorScheme} />
       </body>
     </html>
@@ -82,7 +81,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App({ loaderData }: Route.ComponentProps) {
   const { ENV, toast } = loaderData;
-  const nonce = useNonce();
 
   useEffect(() => {
     if (toast?.type === "error") {
@@ -94,16 +92,16 @@ export default function App({ loaderData }: Route.ComponentProps) {
   }, [toast]);
 
   return (
-    <>
+    <NonceProvider value="">
       <Outlet />
       <script
-        nonce={nonce}
+        nonce=""
         // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
         dangerouslySetInnerHTML={{
           __html: `window.ENV = ${JSON.stringify(ENV)}`,
         }}
       />
-    </>
+    </NonceProvider>
   );
 }
 

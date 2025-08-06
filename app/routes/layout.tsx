@@ -1,11 +1,11 @@
 import { CircleFadingPlusIcon } from "lucide-react";
-import { Link, Outlet, data, href } from "react-router";
+import { data, href, Link, Outlet } from "react-router";
 import { ColorSchemeToggle } from "~/components/ColorSchemeToggle";
 import { UserNav } from "~/components/UserNav";
+import { Button } from "~/components/ui/Button";
 import { authSessionContext } from "~/utils/contexts";
 import { authMiddleware } from "~/utils/middlewares/authGuard.server";
 import type { Route } from "./+types/layout";
-import { Button } from "~/components/ui/Button";
 
 export const unstable_middleware = [authMiddleware];
 
@@ -22,9 +22,23 @@ export default function AuthenticatedLayout(_: Route.ComponentProps) {
           <Link to={href("/")} className="flex items-center gap-2">
             LOGO
           </Link>
+          <nav className="flex items-center gap-6">
+            <Link 
+              to="/deals" 
+              className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+            >
+              Скидки
+            </Link>
+            <Link 
+              to="/forum" 
+              className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+            >
+              Форум
+            </Link>
+          </nav>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link to="/todos">
+              <Link to="/deals/add">
                 <CircleFadingPlusIcon />
               </Link>
             </Button>

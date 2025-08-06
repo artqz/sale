@@ -1,18 +1,19 @@
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useId, useState } from "react";
-import { cn } from "~/utils/utils";
+import { cn } from "~/utils/common";
 import { Label } from "./ui/Label";
 import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
 import type { VariantProps } from "class-variance-authority";
 import { Spinner } from "./Spinner";
 import type { buttonVariants } from "./ui/buttonVariants";
+import { Textarea } from "./ui/Textarea";
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined;
 
 export interface FormFieldProps {
   labelProps?: React.LabelHTMLAttributes<HTMLLabelElement>;
-  inputProps: React.InputHTMLAttributes<HTMLInputElement>;
+  inputProps: React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>;
   errors?: ListOfErrors;
   className?: string;
 }
@@ -60,6 +61,30 @@ export function InputField({
     <div className={cn(className, "flex flex-col gap-2")}>
       {labelProps && <Label htmlFor={id} {...labelProps} />}
       <Input
+        id={id}
+        aria-invalid={errorId ? true : undefined}
+        aria-describedby={errorId}
+        {...inputProps}
+      />
+      {errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+    </div>
+  );
+}
+
+export function TextareaField({
+  labelProps,
+  inputProps,
+  errors,
+  className,
+}: FormFieldProps) {
+  const fallbackId = useId();
+  const id = inputProps.id || fallbackId;
+  const errorId = errors?.length ? `${id}-error` : undefined;
+
+  return (
+    <div className={cn(className, "flex flex-col gap-2")}>
+      {labelProps && <Label htmlFor={id} {...labelProps} />}
+      <Textarea
         id={id}
         aria-invalid={errorId ? true : undefined}
         aria-describedby={errorId}

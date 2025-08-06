@@ -1,0 +1,5 @@
+procs:
+  dev:
+    shell: npm run dev
+  migrate:
+    shell: npx drizzle-kit push --watch 
