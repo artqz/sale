@@ -8,6 +8,8 @@ import type { VariantProps } from "class-variance-authority";
 import { Spinner } from "./Spinner";
 import type { buttonVariants } from "./ui/buttonVariants";
 import { Textarea } from "./ui/Textarea";
+import { Combobox } from "./ui/Combobox";
+import { SearchableCombobox } from "./ui/SearchableCombobox";
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined;
 
@@ -157,5 +159,63 @@ export function LoadingButton({
         buttonText
       )}
     </Button>
+  );
+}
+
+export interface ComboboxFieldProps {
+  labelProps?: React.LabelHTMLAttributes<HTMLLabelElement>;
+  comboboxProps: React.ComponentProps<typeof Combobox>;
+  errors?: ListOfErrors;
+  className?: string;
+}
+
+export function ComboboxField({
+  labelProps,
+  comboboxProps,
+  errors,
+  className,
+}: ComboboxFieldProps) {
+  const fallbackId = useId();
+  const id = comboboxProps.name || fallbackId;
+  const errorId = errors?.length ? `${id}-error` : undefined;
+
+  return (
+    <div className={cn(className, "flex flex-col gap-2")}>
+      {labelProps && <Label htmlFor={id} {...labelProps} />}
+      <Combobox
+        {...comboboxProps}
+        id={id}
+      />
+      {errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+    </div>
+  );
+}
+
+export interface SearchableComboboxFieldProps {
+  labelProps?: React.LabelHTMLAttributes<HTMLLabelElement>;
+  comboboxProps: React.ComponentProps<typeof SearchableCombobox>;
+  errors?: ListOfErrors;
+  className?: string;
+}
+
+export function SearchableComboboxField({
+  labelProps,
+  comboboxProps,
+  errors,
+  className,
+}: SearchableComboboxFieldProps) {
+  const fallbackId = useId();
+  const id = comboboxProps.name || fallbackId;
+  const errorId = errors?.length ? `${id}-error` : undefined;
+
+  return (
+    <div className={cn(className, "flex flex-col gap-2")}>
+      {labelProps && <Label htmlFor={id} {...labelProps} />}
+      <SearchableCombobox
+        {...comboboxProps}
+        id={id}
+      />
+      {errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+    </div>
   );
 }

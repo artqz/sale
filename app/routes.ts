@@ -20,6 +20,20 @@ export default [
   layout("routes/layout.tsx", [
     index("routes/home.tsx"),
 
+    // Documents
+    ...prefix("docs", [
+      layout("routes/docs/layout.tsx", [
+        index("routes/docs/index.tsx"),
+        route("add", "routes/docs/add.tsx"),
+        route(":documentId", "routes/docs/documentId/index.tsx"),
+        ...prefix(":documentId/edit", [
+          index("routes/docs/documentId/edit/index.tsx"),
+          route("links", "routes/docs/documentId/edit/links.tsx"),
+          route("huy", "routes/docs/documentId/edit/huy.tsx"),
+        ]),
+      ]),
+    ]),
+
     // Deals
     ...prefix("deals", [
       index("routes/deals/index.tsx"),
@@ -54,6 +68,11 @@ export default [
     route("color-scheme", "routes/api/colorScheme.ts"),
     route("comments", "routes/api/comments.ts"),
     route("upload-image", "routes/api/uploadImage.ts"),
+    route("search", "routes/api/search.ts"),
+    ...prefix("docs", [
+      route("upload", "routes/api/docs/upload.ts"),
+      route("addDocument", "routes/api/docs/addDocument.ts"),
+    ]),
   ]),
 
   // Not found
